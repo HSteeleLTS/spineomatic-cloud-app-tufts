@@ -179,7 +179,7 @@ export class MainComponent implements OnInit, OnDestroy {
     
     // Open print dialog
     var win = (window as any).open('','','left=0,top=0,width=552,height=477,toolbar=0,scrollbars=0,status =0');
-    win.document.write(formatted_content);
+    win.document.write(content);
     win.print();
     win.document.close();
     win.close();
