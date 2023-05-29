@@ -13,6 +13,7 @@ import { FormControl } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
+import * as HtmlToText from 'html-to-text';
 
 const LABELS_STICKY = "labelsSticky";
 const dialogData: PromptDialogData = {
@@ -109,11 +110,13 @@ export class LabelsComponent implements OnInit {
   }
 
   print() {
-    const doc = this.iframe.nativeElement.contentDocument || this.iframe.nativeElement.contentWindow;
+    var doc = this.iframe.nativeElement.contentDocument || this.iframe.nativeElement.contentWindow;
     // CIL change: margin of 0px on html body to prevent default 8px margins
     const CIL_style = "<style>@media print {html, body {margin: 0px;} }</style>";
     doc.body.innerHTML = this.printService.CIL ? CIL_style : "";
     doc.body.appendChild(this.printComponent.location.nativeElement);
+	doc = HtmlToText.htmlToText(doc);
+	this.printComponent = HtmlToText.htmlToText(this.printComponent);
     this.loading = true;
     this.printComponent.instance.load()
     .pipe(finalize(() => this.loading = false))

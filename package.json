@@ -25,6 +25,7 @@
     "@tinymce/tinymce-angular": "^4.2.0",
     "dot-object": "^2.1.4",
     "eca-components": "~1.4.2",
+    "html-to-text": "^9.0.5",
     "json-schema": "0.4.0",
     "lodash": "~4.17.21",
     "minimist": "~1.2.6",
@@ -34,7 +35,8 @@
     "tinymce": "^5.8.2",
     "url-parse": "~1.5.9",
     "uuid": "^8.0.0",
-    "zone.js": "~0.10.3"
+    "zone.js": "~0.10.3",
+	"html-to-text": "~8"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~0.1102.14",
