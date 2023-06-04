@@ -14,6 +14,7 @@ import { Observable } from 'rxjs';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { htmlToText } from 'html-to-text';
+import { parse } from 'node-html-parser';
 
 const LABELS_STICKY = "labelsSticky";
 const dialogData: PromptDialogData = {
@@ -109,37 +110,101 @@ export class LabelsComponent implements OnInit {
       this.printService.offset <= this.printService.layout.perPage;
   }
 
-  print() {
-    var doc = this.iframe.nativeElement.contentDocument || this.iframe.nativeElement.contentWindow;
+   print() {
+	   
+	const doc1 = this.iframe.nativeElement.contentDocument || this.iframe.nativeElement.contentWindow;
+	var inner_html = doc1.body.innerHTML;
+	var printWindow = window.open();
+	printWindow.document.open('text/plain')
+    var contents = this.getPlainText(inner_html);
+	printWindow.document.write(contents);
+	printWindow.document.close();
+	printWindow.focus();
+    printWindow.print();
+    printWindow.close();
+/*     const doc = this.iframe.nativeElement.contentDocument || this.iframe.nativeElement.contentWindow;
     // CIL change: margin of 0px on html body to prevent default 8px margins
     const CIL_style = "<style>@media print {html, body {margin: 0px;} }</style>";
     doc.body.innerHTML = this.printService.CIL ? CIL_style : "";
     doc.body.appendChild(this.printComponent.location.nativeElement);
-	console.log(this.printComponent);
-	console.log(doc.body.innerHtml);
-	doc = htmlToText.htmlToText(doc);
-	this.printComponent = htmlToText.htmlToText(this.printComponent);
     this.loading = true;
     this.printComponent.instance.load()
     .pipe(finalize(() => this.loading = false))
     .subscribe({
       next: () => setTimeout(this.printIt),
       error: e => this.alert.error('An error occurred: ' + e.message),
-    });
+    }); */
   }
 
   get percentComplete() {
     return !!this.printComponent ? this.printComponent.instance.percentLoaded : 0;
   }
+  
+  getPlainText (input_html) {
+    
+	input_html = input_html.replace(/(\d+)mm/g, function(match, number) {
+    return (+number * 3.78).toString() + 'px';
+	});
+	
+	input_html = input_html.replace(/^\<body[^\>]+\>(.+)\<\/body.+$/, '$1');
+	
+	var document_1 = parse(input_html);
+	var row = document_1.getElementsByTagName('td');
+	var call_number = row[0].text;
+	var title = row[2].text;
+	var call_number_style = row[0].getAttribute('style');
+	var title_style = row[2].getAttribute('style');
 
+	var call_number_width = call_number_style.match(/width:\s(\d+)/)[1];
+	var title_width = title_style.match(/width:\s(\d+)/)[1];
+	
+	const parseWidth = (element_width, pixels_per_character) => element_width.replace(/.+/g, 
+		+element_width/ pixels_per_character
+	
+	);
+	
+	call_number_width = parseWidth(call_number_width, 8);
+    title_width = parseWidth(title_width, 8);
+	
+	const wordWrap = (str, max, br = '<BR>') => str.replace(
+	  new RegExp(`(?![^\\n]{1,${max}}$)([^\\n]{1,${max}})\\s`, 'g'), '$1' + br
+	);
+	
+	call_number = wordWrap(call_number, call_number_width);
+	title = wordWrap(title, title_width);
+	
+	call_number = "<p>" + call_number + "test text</p>";
+	document_1.getElementsByTagName('td')[0].set_content(call_number);
+	document_1.getElementsByTagName('td')[2].set_content(title);
+	
+	var html_string_updated = document_1.toString();
+	
+	const options_1 = {
+	selectors: [
+		{ selector: 'table', format: 'block' }]
+	};
+	
+	var text = htmlToText.htmlToText(html_string_updated, options_1);
+	return text;  
+  }
   printIt = () => {
-    this.iframe.nativeElement.contentWindow.print();
-    this.dialog.confirm(dialogData)
+	const doc1 = this.iframe.nativeElement.contentDocument || this.iframe.nativeElement.contentWindow;
+	var inner_html = doc1.body.innerHTML;
+	var printWindow = window.open();
+	printWindow.document.open('text/plain')
+    var contents = this.getPlainText(inner_html);
+	printWindow.document.write(contents);
+	printWindow.document.close();
+	printWindow.focus();
+    printWindow.print();
+    printWindow.close();
+
+/*     this.dialog.confirm(dialogData)
     .subscribe(result => {
       if (!result) return;
       this.printService.clear()
       .then(() => this.router.navigate(['/']));
-    });
+    }); */
   }
 
   onSelected(event: MatAutocompleteSelectedEvent, type: string) {
