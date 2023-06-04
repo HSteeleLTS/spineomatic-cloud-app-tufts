@@ -140,52 +140,49 @@ export class LabelsComponent implements OnInit {
     return !!this.printComponent ? this.printComponent.instance.percentLoaded : 0;
   }
   
-  getPlainText (input_html) {
-    
-	input_html = input_html.replace(/(\d+)mm/g, function(match, number) {
-    return (+number * 3.78).toString() + 'px';
-	});
-	
-	input_html = input_html.replace(/^\<body[^\>]+\>(.+)\<\/body.+$/, '$1');
-	
-	var document_1 = parse(input_html);
-	var row = document_1.getElementsByTagName('td');
-	var call_number = row[0].text;
-	var title = row[2].text;
-	var call_number_style = row[0].getAttribute('style');
-	var title_style = row[2].getAttribute('style');
+    function getPlainText(input_html: string): string {
+	  input_html = input_html.replace(/(\d+)mm/g, (match: string, number: string) => {
+		return (+number * 3.78).toString() + 'px';
+	  });
 
-	var call_number_width = call_number_style.match(/width:\s(\d+)/)[1];
-	var title_width = title_style.match(/width:\s(\d+)/)[1];
-	
-	const parseWidth = (element_width, pixels_per_character) => element_width.replace(/.+/g, 
-		+element_width/ pixels_per_character
-	
-	);
-	
-	call_number_width = parseWidth(call_number_width, 8);
-    title_width = parseWidth(title_width, 8);
-	
-	const wordWrap = (str, max, br = '<BR>') => str.replace(
-	  new RegExp(`(?![^\\n]{1,${max}}$)([^\\n]{1,${max}})\\s`, 'g'), '$1' + br
-	);
-	
-	call_number = wordWrap(call_number, call_number_width);
-	title = wordWrap(title, title_width);
-	
-	call_number = "<p>" + call_number + "test text</p>";
-	document_1.getElementsByTagName('td')[0].set_content(call_number);
-	document_1.getElementsByTagName('td')[2].set_content(title);
-	
-	var html_string_updated = document_1.toString();
-	
-	const options_1 = {
-	selectors: [
-		{ selector: 'table', format: 'block' }]
-	};
-	
-	var text = htmlToText.htmlToText(html_string_updated, options_1);
-	return text;  
+	  input_html = input_html.replace(/^\<body[^\>]+\>(.+)\<\/body.+$/, '$1');
+
+	  const document_1 = parse(input_html);
+	  const row = document_1.getElementsByTagName('td');
+	  const call_number = row[0].text;
+	  const title = row[2].text;
+	  const call_number_style = row[0].getAttribute('style');
+	  const title_style = row[2].getAttribute('style');
+
+	  const call_number_width = call_number_style.match(/width:\s(\d+)/)![1];
+	  const title_width = title_style.match(/width:\s(\d+)/)![1];
+
+	  const parseWidth = (element_width: string, pixels_per_character: number): string => {
+		return (+element_width / pixels_per_character).toString();
+	  };
+
+	  call_number_width = parseWidth(call_number_width, 8);
+	  title_width = parseWidth(title_width, 8);
+
+	  const wordWrap = (str: string, max: number, br: string = '<BR>'): string => {
+		return str.replace(new RegExp(`(?![^\\n]{1,${max}}$)([^\\n]{1,${max}})\\s`, 'g'), '$1' + br);
+	  };
+
+	  call_number = wordWrap(call_number, parseInt(call_number_width, 10));
+	  title = wordWrap(title, parseInt(title_width, 10));
+
+	  call_number = "<p>" + call_number + "test text</p>";
+	  document_1.getElementsByTagName('td')[0].set_content(call_number);
+	  document_1.getElementsByTagName('td')[2].set_content(title);
+
+	  const html_string_updated = document_1.toString();
+
+	  const options_1 = {
+		selectors: [{ selector: 'table', format: 'block' }]
+	  };
+
+	  const text = htmlToText.htmlToText(html_string_updated, options_1);
+	  return text;
   }
   printIt = () => {
 	const doc1 = this.iframe.nativeElement.contentDocument || this.iframe.nativeElement.contentWindow;
