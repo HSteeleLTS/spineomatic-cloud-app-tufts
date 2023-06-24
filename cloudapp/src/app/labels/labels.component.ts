@@ -155,9 +155,9 @@ export class LabelsComponent implements OnInit {
 //			 colSpacing: 1, maxColumnWidth: 1200, leadingLineBreaks: 0 },
 		  }
 	
-	
-	  html_string_updated = html_string_updated.replace(new RegExp("\<table", "g"), "<table class='label_table'");
-	  var return_text = htmlToText(html_string_updated, {tables:['.label_table']});
+	  input_html = input_html.replace("\n", "<BR>");
+	  // html_string_updated = html_string_updated.replace(new RegExp("\<table", "g"), "<table class='label_table'");
+	  var return_text = htmlToText(input_html, {tables: true});
 	  
 	  
 	  //return_text =  return_text.replace             (new RegExp("[\n\R]", "g"), "&middot;")
