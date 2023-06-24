@@ -112,33 +112,33 @@ export class LabelsComponent implements OnInit {
 
 	  var document_1 = parse(input_html);
 	  var row = document_1.getElementsByTagName('td');
-	  var call_number = row[0].text;
-	  var title = row[2].text;
-	  var call_number_style = row[0].getAttribute('style');
-	  var title_style = row[2].getAttribute('style');
+	  var spine_label = row[0].text;
+	  var pocket_label = row[2].text;
+	  var spine_label_style = row[0].getAttribute('style');
+	  var pocket_label_style = row[2].getAttribute('style');
 
-	  var call_number_width = call_number_style.match(/width:\s(\d+)/)![1];
-	  var title_width = title_style.match(/width:\s(\d+)/)![1];
+	  var spine_label_width = spine_label_style.match(/width:\s(\d+)/)![1];
+	  var pocket_label_width = pocket_label_style.match(/width:\s(\d+)/)![1];
 
 	  const parseWidth = (element_width: string, pixels_per_character: number): string => {
 		return (+element_width / pixels_per_character).toString();
 	  };
 
-	  call_number_width = parseWidth(call_number_width, 8);
+	  spine_label_width = parseWidth(spine_label_width, 8);
 
-	  title_width = parseWidth(title_width, 8);
+	  pocket_label_width = parseWidth(pocket_label_width, 8);
 
 	  const wordWrap = (str: string, max: number, br: string = '<BR>'): string => {
 		return str.replace(new RegExp(`(?![^\\n]{1,${max}}$)([^\\n]{1,${max}})\\s`, 'g'), '$1' + br);
 	  };
 
-	  call_number = wordWrap(call_number, parseInt(call_number_width, 10));
-	  title = wordWrap(title, parseInt(title_width, 10));
+	  spine_label = wordWrap(spine_label, parseInt(spine_label_width, 10));
+	  pocket_label = wordWrap(pocket_label, parseInt(pocket_label_width, 10));
 
-      call_number = "<pre>" + call_number + "</pre>";
-	  title = "<pre>" + title + "</pre>";
-	  document_1.getElementsByTagName('td')[0].set_content(call_number);
-	  document_1.getElementsByTagName('td')[2].set_content(title);
+      spine_label = "<pre>" + spine_label + "</pre>";
+	  pocket_label = "<pre>" + pocket_label + "</pre>";
+	  document_1.getElementsByTagName('td')[0].set_content(spine_label);
+	  document_1.getElementsByTagName('td')[2].set_content(pocket_label);
 
 	  var html_string_updated = document_1.toString();
 	  //alert(html_string_updated);
@@ -155,16 +155,17 @@ export class LabelsComponent implements OnInit {
 //			 colSpacing: 1, maxColumnWidth: 1200, leadingLineBreaks: 0 },
 		  }
 	
-	  input_html = input_html.replace("\n", "<BR>");
+	  //input_html = input_html.replace("\n", "<BR>");
+	  //alert(input_html);
 	  // html_string_updated = html_string_updated.replace(new RegExp("\<table", "g"), "<table class='label_table'");
-	  var return_text = htmlToText(input_html, {tables: true});
+	  var return_text = htmlToText(html_string_updated, {tables: true});
 	  
 	  
 	  //return_text =  return_text.replace             (new RegExp("[\n\R]", "g"), "&middot;")
 	  
 	  return_text = "<pre>" + return_text + "</pre>";
 	  //return_text = "<pre>" + return_text + "</pre>";
-	  alert(return_text);
+	  //alert(return_text);
 
 
 	  return return_text;
