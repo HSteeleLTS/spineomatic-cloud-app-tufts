@@ -14,6 +14,7 @@ export class PrintService {
   setId: string;
   items = new Set<string>();
   layout: Layout;
+
   template: Template;
   offset: number = 0;
   gridlines = false;  

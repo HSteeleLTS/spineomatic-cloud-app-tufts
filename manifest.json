@@ -1,6 +1,6 @@
 {
    "id": "exlibrisgroup/spineomatic-cloudapp",
-   "title": "SpineOMatic",
+   "title": "SpineOMatic - Text Only",
    "subtitle": "Print spine labels from Alma",
    "author": "Ex Libris",
    "description": "Define layouts and templates, print barcodes and call numbers. Currently available for early-testers.",

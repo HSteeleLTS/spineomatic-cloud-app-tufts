@@ -13,8 +13,10 @@ import { FormControl } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
-import { htmlToText } from 'html-to-text';
+import { htmlToText } from 'html2text'; 
 import { parse } from 'node-html-parser';
+
+
 
 const LABELS_STICKY = "labelsSticky";
 const dialogData: PromptDialogData = {
@@ -101,67 +103,29 @@ export class LabelsComponent implements OnInit {
       })
     }
   }
-
-  get valid() {
-    return !!this.printService.layout && 
-      !!this.printService.template &&
-      this.printService.items.size > 0 &&
-      this.printService.offset >= 0 &&
-      this.printService.offset <= this.printService.layout.perPage;
-  }
-
-   print() {
-	   
-	const doc1 = this.iframe.nativeElement.contentDocument || this.iframe.nativeElement.contentWindow;
-	var inner_html = doc1.body.innerHTML;
-	var printWindow = window.open();
-	printWindow.document.open('text/plain')
-    var contents = this.getPlainText(inner_html);
-	printWindow.document.write(contents);
-	printWindow.document.close();
-	printWindow.focus();
-    printWindow.print();
-    printWindow.close();
-/*     const doc = this.iframe.nativeElement.contentDocument || this.iframe.nativeElement.contentWindow;
-    // CIL change: margin of 0px on html body to prevent default 8px margins
-    const CIL_style = "<style>@media print {html, body {margin: 0px;} }</style>";
-    doc.body.innerHTML = this.printService.CIL ? CIL_style : "";
-    doc.body.appendChild(this.printComponent.location.nativeElement);
-    this.loading = true;
-    this.printComponent.instance.load()
-    .pipe(finalize(() => this.loading = false))
-    .subscribe({
-      next: () => setTimeout(this.printIt),
-      error: e => this.alert.error('An error occurred: ' + e.message),
-    }); */
-  }
-
-  get percentComplete() {
-    return !!this.printComponent ? this.printComponent.instance.percentLoaded : 0;
-  }
-  
-    function getPlainText(input_html: string): string {
+     getPlainText(input_html: string): string {
 	  input_html = input_html.replace(/(\d+)mm/g, (match: string, number: string) => {
 		return (+number * 3.78).toString() + 'px';
 	  });
 
 	  input_html = input_html.replace(/^\<body[^\>]+\>(.+)\<\/body.+$/, '$1');
 
-	  const document_1 = parse(input_html);
-	  const row = document_1.getElementsByTagName('td');
-	  const call_number = row[0].text;
-	  const title = row[2].text;
-	  const call_number_style = row[0].getAttribute('style');
-	  const title_style = row[2].getAttribute('style');
+	  var document_1 = parse(input_html);
+	  var row = document_1.getElementsByTagName('td');
+	  var call_number = row[0].text;
+	  var title = row[2].text;
+	  var call_number_style = row[0].getAttribute('style');
+	  var title_style = row[2].getAttribute('style');
 
-	  const call_number_width = call_number_style.match(/width:\s(\d+)/)![1];
-	  const title_width = title_style.match(/width:\s(\d+)/)![1];
+	  var call_number_width = call_number_style.match(/width:\s(\d+)/)![1];
+	  var title_width = title_style.match(/width:\s(\d+)/)![1];
 
 	  const parseWidth = (element_width: string, pixels_per_character: number): string => {
 		return (+element_width / pixels_per_character).toString();
 	  };
 
 	  call_number_width = parseWidth(call_number_width, 8);
+
 	  title_width = parseWidth(title_width, 8);
 
 	  const wordWrap = (str: string, max: number, br: string = '<BR>'): string => {
@@ -171,37 +135,98 @@ export class LabelsComponent implements OnInit {
 	  call_number = wordWrap(call_number, parseInt(call_number_width, 10));
 	  title = wordWrap(title, parseInt(title_width, 10));
 
-	  call_number = "<p>" + call_number + "test text</p>";
+      call_number = "<pre>" + call_number + "</pre>";
+	  title = "<pre>" + title + "</pre>";
 	  document_1.getElementsByTagName('td')[0].set_content(call_number);
 	  document_1.getElementsByTagName('td')[2].set_content(title);
 
-	  const html_string_updated = document_1.toString();
+	  var html_string_updated = document_1.toString();
+	  //alert(html_string_updated);
+	  html_string_updated = html_string_updated.replace("<tbody>", "");
+	  html_string_updated = html_string_updated.replace("</tbody>", "");
 
-	  const options_1 = {
-		selectors: [{ selector: 'table', format: 'block' }]
-	  };
+      var html_string_updated_1 = "<table class='address'><tr><th align='left'>Invoice Address <br></th><th align='left'>Shipment Address</th></tr><tr><td align='left'><p>Mr.<br>John Doe<br>Featherstone Street 49<br>28199 Bremen<br></p></td><td align='right'><p>Mr.<br>John Doe<br>Featherstone Street 49<br>28199 Bremen<br></p></td></tr></table>"
+      //return html_string_updated;
 
-	  const text = htmlToText.htmlToText(html_string_updated, options_1);
-	  return text;
+		const options_1 = {
+	
+			 tables:['.address'],
+			 //format: 'dataTable'
+//			 colSpacing: 1, maxColumnWidth: 1200, leadingLineBreaks: 0 },
+		  }
+	
+	
+	  html_string_updated = html_string_updated.replace(new RegExp("\<table", "g"), "<table class='label_table'");
+	  var return_text = htmlToText(html_string_updated, {tables:['.label_table']});
+	  
+	  
+	  //return_text =  return_text.replace             (new RegExp("[\n\R]", "g"), "&middot;")
+	  
+	  return_text = "<pre>" + return_text + "</pre>";
+	  //return_text = "<pre>" + return_text + "</pre>";
+	  alert(return_text);
+
+
+	  return return_text;
   }
-  printIt = () => {
-	const doc1 = this.iframe.nativeElement.contentDocument || this.iframe.nativeElement.contentWindow;
-	var inner_html = doc1.body.innerHTML;
-	var printWindow = window.open();
-	printWindow.document.open('text/plain')
-    var contents = this.getPlainText(inner_html);
-	printWindow.document.write(contents);
-	printWindow.document.close();
-	printWindow.focus();
-    printWindow.print();
-    printWindow.close();
+  get valid() {
+    return !!this.printService.layout && 
+      !!this.printService.template &&
+      this.printService.items.size > 0 &&
+      this.printService.offset >= 0 &&
+      this.printService.offset <= this.printService.layout.perPage;
+  }
 
-/*     this.dialog.confirm(dialogData)
+  print() {
+    const doc = this.iframe.nativeElement.contentDocument || this.iframe.nativeElement.contentWindow;
+    // CIL change: margin of 0px on html body to prevent default 8px margins
+    const CIL_style = "<style>@media print {html, body {margin: 0px;} }</style>";
+    doc.body.innerHTML = this.printService.CIL ? CIL_style : "";
+    doc.body.appendChild(this.printComponent.location.nativeElement);
+	var doc1 = "<div><p>test test1</p></div>";
+    this.loading = true;
+	
+	this.printComponent.instance.load()
+    .pipe(finalize(() => this.loading = false))
+    .subscribe({
+      next: () => setTimeout(this.printIt),
+	  //next: (doc) => console.log('Observer got a next value: ' + x),
+      error: e => this.alert.error('An error occurred: ' + e.message),
+    });
+  }
+
+  get percentComplete() {
+    return !!this.printComponent ? this.printComponent.instance.percentLoaded : 0;
+  }
+
+   printIt = () => {
+    
+	var contents = this.printComponent.instance.contents(this.printComponent.instance.items[0][0]);
+	contents = contents.toString();
+
+	//this.iframe.nativeElement.contentWindow.print();
+	//const doc = this.iframe.nativeElement.contentDocument || this.iframe.nativeElement.contentWindow;
+    // CIL change: margin of 0px on html body to prevent default 8px margins
+    //const CIL_style = "<style>@media print {html, body {margin: 0px;} }</style>";
+    //doc.body.innerHTML = this.printService.CIL ? CIL_style : "";
+    //doc.body.appendChild(this.printComponent.location.nativeElement);
+	var outputHTML = this.getPlainText(contents);
+	//this.alert.info(outputHTML);
+	//console.log(outputHTML);
+    var printWindow = window.open();
+	printWindow.focus();
+    printWindow.document.open('text/plain');
+    printWindow.document.write(outputHTML);
+    printWindow.document.close(); 
+	 /* printWindow.print();*/
+	//printWindow.close();
+	//this.iframe.nativeElement.contentWindow.document.write(outputHTML);
+    this.dialog.confirm(dialogData)
     .subscribe(result => {
       if (!result) return;
       this.printService.clear()
       .then(() => this.router.navigate(['/']));
-    }); */
+    });
   }
 
   onSelected(event: MatAutocompleteSelectedEvent, type: string) {

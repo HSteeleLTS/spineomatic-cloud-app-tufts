@@ -37,10 +37,15 @@
       }"
       *ngFor="let item of page"
       [innerHTML]="contents(item)"
+	  
     >
+
     </div>
+	
+
   </div>
 </div> 
+
 <ngx-barcode *ngIf="layout && template"
   style='visibility: hidden;'
   [bc-height] = "20"

@@ -15,6 +15,8 @@ import { callNumberParsers } from '../models/call-number-parsers';
 import { checksums } from '../models/checksums';
 import { getLocaleDateFormat } from '@angular/common';
 import { TranslateService } from '@ngx-translate/core';
+import { AlertService, CloudAppStoreService } from '@exlibris/exl-cloudapp-angular-lib';
+
 
 const INCH_IN_PIXELS = 96, CM_IN_PIXELS = 37.8, PREVIEW_WIDTH = 250;
 
@@ -34,6 +36,7 @@ export class PrintComponent implements OnInit {
   private itemsLoaded = 0;
   percentLoaded = 0;
   private _preview: Layout;
+  
   @Input() set preview(val: Layout) {
     try {
       const scale = PREVIEW_WIDTH / (val.pageWidth * (val.measure == 'in' ? INCH_IN_PIXELS : CM_IN_PIXELS));
@@ -48,30 +51,64 @@ export class PrintComponent implements OnInit {
       this.items = [];
     }
   }
+  
+
+
+	  
+	  
+  
 
   constructor(
+  
     public printService: PrintService,
     private alma: AlmaService,
     private configService: ConfigService,
     private sanitizer: DomSanitizer,
     private translate: TranslateService,
+	private alert: AlertService,
   ) { }
 
+
+
   ngOnInit() {
+	  
   }
 
-  load() {
+ returnItems() {
+	  
+return JSON.stringify(Array.from(this.printService.items).map(i=>this.getItem(i)));
+  }
+ load() {
     return this.configService.get()
     .pipe(
       tap(config=>this.config = config),
       switchMap(()=>forkJoin(Array.from(this.printService.items).map(i=>this.getItem(i)))),
       tap(items => items.unshift(...new Array(this.printService.offset))),
       tap(items => this.items = chunk(items, this.layout.perPage)),
+
       finalize(()=>{
         this.percentLoaded = 0; this.itemsLoaded = 0;
       }),
     )
   }
+	
+
+
+
+		
+	
+    //var print_contents = switchMap(()=>forkJoin(Array.from(this.printService.items).map(i=>this.getItem(i))));
+/* 	var printWindow = window.open();
+    printWindow.document.open('text/plain');
+    //var print_text = this.getPlainText(print_contents);
+    printWindow.document.write(this.getPlainText(item));
+    printWindow.document.close();
+    printWindow.focus();
+  printWindow.print();
+    printWindow.close(); */
+	
+  
+
 
   getItem(link: string) {
     return this.alma.getItemForLabel(link).pipe(
@@ -168,10 +205,13 @@ export class PrintComponent implements OnInit {
         }
       }
     })
-    .replace(/(<br\s*\/?>){2,}/gmi, '<br>'); /* Suppress multiple line breaks */
-    return this.sanitizer.bypassSecurityTrustHtml(body);
+      .replace(/(<br\s*\/?>){2,}/gmi, '<br>'); /* Suppress multiple line breaks */
+    return body;
   }
+  
 
+
+  
   getBarCode(val: string) {
     if (this.template.blankFields && !val) return " <BR>";
     if (!this.printService.template.asBarcode) return val; 
