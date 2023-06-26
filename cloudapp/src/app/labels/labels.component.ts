@@ -131,15 +131,18 @@ export class LabelsComponent implements OnInit {
 	  const wordWrap = (str: string, max: number, br: string = '<BR>'): string => {
 		return str.replace(new RegExp(`(?![^\\n]{1,${max}}$)([^\\n]{1,${max}})\\s`, 'g'), '$1' + br);
 	  };
-
+	
 	  spine_label = wordWrap(spine_label, parseInt(spine_label_width, 10));
 	  pocket_label = wordWrap(pocket_label, parseInt(pocket_label_width, 10));
-
+	  spine_label = spine_label.replace(/\.([A-Za-z])/, '<BR>.$1');
+	  spine_label = spine_label.replace(/^\s*([A-Za-z]+)(\d+)/, '$1<BR>$2');
+	  pocket_label = pocket_label.replace(/\//, '');
       spine_label = "<pre>" + spine_label + "</pre>";
 	  pocket_label = "<pre>" + pocket_label + "</pre>";
 	  document_1.getElementsByTagName('td')[0].set_content(spine_label);
 	  document_1.getElementsByTagName('td')[2].set_content(pocket_label);
 
+	  
 	  var html_string_updated = document_1.toString();
 	  //alert(html_string_updated);
 	  html_string_updated = html_string_updated.replace("<tbody>", "");
@@ -218,10 +221,13 @@ export class LabelsComponent implements OnInit {
 	printWindow.focus();
     printWindow.document.open('text/plain');
     printWindow.document.write(outputHTML);
-    printWindow.document.close(); 
+	printWindow.print()
+    printWindow.document.close();  
 	 /* printWindow.print();*/
-	//printWindow.close();
+	printWindow.close();
 	//this.iframe.nativeElement.contentWindow.document.write(outputHTML);
+	//this.iframe.nativeElement.contentWindow.innerHTML = outputHTML;
+	//this.iframe.nativeElement.contentWindow.print()
     this.dialog.confirm(dialogData)
     .subscribe(result => {
       if (!result) return;
