@@ -134,9 +134,9 @@ export class LabelsComponent implements OnInit {
 	
 	  spine_label = wordWrap(spine_label, parseInt(spine_label_width, 10));
 	  pocket_label = wordWrap(pocket_label, parseInt(pocket_label_width, 10));
-	  spine_label = spine_label.replace(/\.([A-Za-z])/, '<BR>.$1');
-	  spine_label = spine_label.replace(/^\s*([A-Za-z]+)(\d+)/, '$1<BR>$2');
-	  pocket_label = pocket_label.replace(/\//, '');
+	  //spine_label = spine_label.replace(/\.([A-Za-z])/, '<BR>.$1');
+	  //spine_label = spine_label.replace(/^\s*([A-Za-z]+)(\d+)/, '$1<BR>$2');
+	  //pocket_label = pocket_label.replace(/\//, '');
       spine_label = "<pre>" + spine_label + "</pre>";
 	  pocket_label = "<pre>" + pocket_label + "</pre>";
 	  document_1.getElementsByTagName('td')[0].set_content(spine_label);
@@ -147,7 +147,7 @@ export class LabelsComponent implements OnInit {
 	  //alert(html_string_updated);
 	  html_string_updated = html_string_updated.replace("<tbody>", "");
 	  html_string_updated = html_string_updated.replace("</tbody>", "");
-
+	  html_string_updated =  html_string_updated.replace(/<BR>\s*<BR>/, "<BR>");
       var html_string_updated_1 = "<table class='address'><tr><th align='left'>Invoice Address <br></th><th align='left'>Shipment Address</th></tr><tr><td align='left'><p>Mr.<br>John Doe<br>Featherstone Street 49<br>28199 Bremen<br></p></td><td align='right'><p>Mr.<br>John Doe<br>Featherstone Street 49<br>28199 Bremen<br></p></td></tr></table>"
       //return html_string_updated;
 
@@ -168,7 +168,7 @@ export class LabelsComponent implements OnInit {
 	  
 	  return_text = "<pre>" + return_text + "</pre>";
 	  //return_text = "<pre>" + return_text + "</pre>";
-	  //alert(return_text);
+	  alert(html_string_updated);
 
 
 	  return return_text;

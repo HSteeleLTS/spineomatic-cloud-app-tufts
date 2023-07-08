@@ -181,6 +181,7 @@ return JSON.stringify(Array.from(this.printService.items).map(i=>this.getItem(i)
                 return '';
             }
             if (detail.substring(18) - 1 < callNoVal.length)
+
               return this.getCallNoPart(callNoVal, detail.substring (18) - 1);  
             else {
               if (this.template.blankFields) 
@@ -264,6 +265,8 @@ return JSON.stringify(Array.from(this.printService.items).map(i=>this.getItem(i)
       if (this.template.blankFields && val[part_number] == '') {
         return " <BR>";
       }
+	  val[part_number] = val[part_number].replace(/(\.)([A-Z-a-z]+)/, "$1 $2");
+	
       return val[part_number];
     }
     else {
