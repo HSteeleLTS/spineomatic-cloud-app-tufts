@@ -135,9 +135,9 @@ return JSON.stringify(Array.from(this.printService.items).map(i=>this.getItem(i)
     let body = this.printService.template.contents
     .replace(/{{ *(\S*:\S*) *}}/g, (match, str) => {
       const [ cmd, detail ] = str.split(':');
-      if (cmd == 'image') {
-        return this.getImage(detail);
-      } else {
+      //if (cmd == 'image') {
+      //  return this.getImage(detail);
+      //} else {
         const val = dot.pick(detail, item);
         switch (detail) {
           case 'raw_barcode':
@@ -181,26 +181,19 @@ return JSON.stringify(Array.from(this.printService.items).map(i=>this.getItem(i)
               else 
                 return '';
             }
-            if (detail.substring(18) - 1 < callNoVal.length) {
+            if (detail.substring(18) - 1 < callNoVal.length)
 			  
               var call_number_part =  this.getCallNoPart(callNoVal, detail.substring (18) - 1);  
-			  if (detail == 'item_data.call_no_1' || (detail == 'item_data.call_no_2' && call_number_part.match(/^[A-Z]{3,}/))) {
+			  if detail == 'item_data.call_no_1'{
 				  
-					
-					call_number_part = call_number_part.replace(/^([A-Z]+)(\d+)(.*)$/g, "$1 <BR> $2$3");
-					//call_number_part = call_number_part.replace(/^([A-Z]+\s\<br\>\s[0-9]+)(\.)([A-Z0-9]+)$/g, "$1 <br> $2$3");
-					//alert(call_number_part);
-					//return                          str.replace(new RegExp(`(?![^\\n]{1,${max}}$)([^\\n]{1,${max}})\\s`, 'g'), '$1' + br);
+					call_number_part = str.replace(new RegExp(`^([A-Z]+)(\d+)`, 'g'), '$1<BR>$2');
 					
               }	
-			  call_number_part = call_number_part.replace(/^(.*?)(\.)([A-Z]+)(.*)$/g, "$1 <BR> $2$3$4");
-/* 			  if (/[^<][B\.([A-Z])/.test(call_number_part)) {
+			  if /\.([A-Z])/test(callNoVal) {
 				  
-				     call_number_part = call_number_part.replace(new RegExp(`\.([A-Z])`, 'g'), '$1.<BR>$2'); 
-			  } */
+				     call_number_part = str.replace(new RegExp(`\.([A-Z])`, 'g'), '.<BR>$1'); 
+			  }
 			  return call_number_part
-			  
-		}
             else {
               if (this.template.blankFields) 
                 return " <BR>";

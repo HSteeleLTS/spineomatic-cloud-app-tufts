@@ -114,7 +114,7 @@ export class LabelsComponent implements OnInit {
 	  var row = document_1.getElementsByTagName('td');
 	  var spine_label = row[0].text;
 	  var pocket_label = row[2].text;
-	  var spine_label_style = row[0].getAttribute('style');
+/* 	  var spine_label_style = row[0].getAttribute('style');
 	  var pocket_label_style = row[2].getAttribute('style');
 
 	  var spine_label_width = spine_label_style.match(/width:\s(\d+)/)![1];
@@ -133,21 +133,21 @@ export class LabelsComponent implements OnInit {
 	  };
 	
 	  spine_label = wordWrap(spine_label, parseInt(spine_label_width, 10));
-	  pocket_label = wordWrap(pocket_label, parseInt(pocket_label_width, 10));
+	  pocket_label = wordWrap(pocket_label, parseInt(pocket_label_width, 10)); */
 	  //spine_label = spine_label.replace(/\.([A-Za-z])/, '<BR>.$1');
 	  //spine_label = spine_label.replace(/^\s*([A-Za-z]+)(\d+)/, '$1<BR>$2');
 	  //pocket_label = pocket_label.replace(/\//, '');
       spine_label = "<pre>" + spine_label + "</pre>";
 	  pocket_label = "<pre>" + pocket_label + "</pre>";
-	  document_1.getElementsByTagName('td')[0].set_content(spine_label);
-	  document_1.getElementsByTagName('td')[2].set_content(pocket_label);
+/* 	  document_1.getElementsByTagName('td')[0].set_content(spine_label);
+	  document_1.getElementsByTagName('td')[2].set_content(pocket_label); */
 
 	  
 	  var html_string_updated = document_1.toString();
 	  //alert(html_string_updated);
 	  html_string_updated = html_string_updated.replace("<tbody>", "");
 	  html_string_updated = html_string_updated.replace("</tbody>", "");
-	  html_string_updated =  html_string_updated.replace(/<BR>\s*<BR>/, "<BR>");
+	  //html_string_updated =  html_string_updated.replace(/<BR>\s*<BR>/, "<BR>");
       var html_string_updated_1 = "<table class='address'><tr><th align='left'>Invoice Address <br></th><th align='left'>Shipment Address</th></tr><tr><td align='left'><p>Mr.<br>John Doe<br>Featherstone Street 49<br>28199 Bremen<br></p></td><td align='right'><p>Mr.<br>John Doe<br>Featherstone Street 49<br>28199 Bremen<br></p></td></tr></table>"
       //return html_string_updated;
 
@@ -168,7 +168,7 @@ export class LabelsComponent implements OnInit {
 	  
 	  return_text = "<pre>" + return_text + "</pre>";
 	  //return_text = "<pre>" + return_text + "</pre>";
-	  alert(html_string_updated);
+	  //alert(html_string_updated);
 
 
 	  return return_text;
