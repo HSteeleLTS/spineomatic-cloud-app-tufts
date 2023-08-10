@@ -208,19 +208,27 @@ export class LabelsComponent implements OnInit {
 	var contents = this.printComponent.instance.contents(this.printComponent.instance.items[0][0]);
 	contents = contents.toString();
 
+	var contents1 = this.printComponent.instance.contents(this.printComponent.instance.items[1][0]);
+	contents1 = contents1.toString();
 	//this.iframe.nativeElement.contentWindow.print();
 	//const doc = this.iframe.nativeElement.contentDocument || this.iframe.nativeElement.contentWindow;
     // CIL change: margin of 0px on html body to prevent default 8px margins
     //const CIL_style = "<style>@media print {html, body {margin: 0px;} }</style>";
     //doc.body.innerHTML = this.printService.CIL ? CIL_style : "";
     //doc.body.appendChild(this.printComponent.location.nativeElement);
+	
+	
 	var outputHTML = this.getPlainText(contents);
+	
+	var outputHTML1 = this.getPlainText(contents1);
+	
+	var total_html = outputHTML + outputHTML1;
 	//this.alert.info(outputHTML);
 	//console.log(outputHTML);
     var printWindow = window.open();
 	printWindow.focus();
     printWindow.document.open('text/plain');
-    printWindow.document.write(outputHTML);
+    printWindow.document.write(total_html);
 	printWindow.print()
     printWindow.document.close();  
 	 /* printWindow.print();*/
