@@ -114,7 +114,7 @@ export class LabelsComponent implements OnInit {
 	  var row = document_1.getElementsByTagName('td');
 	  var spine_label = row[0].text;
 	  var pocket_label = row[2].text;
-/* 	  var spine_label_style = row[0].getAttribute('style');
+  	  var spine_label_style = row[0].getAttribute('style');
 	  var pocket_label_style = row[2].getAttribute('style');
 
 	  var spine_label_width = spine_label_style.match(/width:\s(\d+)/)![1];
@@ -133,14 +133,14 @@ export class LabelsComponent implements OnInit {
 	  };
 	
 	  spine_label = wordWrap(spine_label, parseInt(spine_label_width, 10));
-	  pocket_label = wordWrap(pocket_label, parseInt(pocket_label_width, 10)); */
+	  pocket_label = wordWrap(pocket_label, parseInt(pocket_label_width, 10)); 
 	  //spine_label = spine_label.replace(/\.([A-Za-z])/, '<BR>.$1');
 	  //spine_label = spine_label.replace(/^\s*([A-Za-z]+)(\d+)/, '$1<BR>$2');
 	  //pocket_label = pocket_label.replace(/\//, '');
       spine_label = "<pre>" + spine_label + "</pre>";
 	  pocket_label = "<pre>" + pocket_label + "</pre>";
-/* 	  document_1.getElementsByTagName('td')[0].set_content(spine_label);
-	  document_1.getElementsByTagName('td')[2].set_content(pocket_label); */
+ 	  document_1.getElementsByTagName('td')[0].set_content(spine_label);
+	  document_1.getElementsByTagName('td')[2].set_content(pocket_label); 
 
 	  
 	  var html_string_updated = document_1.toString();
@@ -205,30 +205,40 @@ export class LabelsComponent implements OnInit {
 
    printIt = () => {
     
-	var contents = this.printComponent.instance.contents(this.printComponent.instance.items[0][0]);
-	contents = contents.toString();
+	var x = 0;
+	var labels = [];
+	while (this.printComponent.instance.items[x]) {
+		var contents = this.printComponent.instance.contents(this.printComponent.instance.items[x][0]);
+		var outputHTML = this.getPlainText(contents);
+		//this.alert.info(outputHTML);
+		labels[x] = outputHTML;
 
-	var contents1 = this.printComponent.instance.contents(this.printComponent.instance.items[1][0]);
-	contents1 = contents1.toString();
-	//this.iframe.nativeElement.contentWindow.print();
-	//const doc = this.iframe.nativeElement.contentDocument || this.iframe.nativeElement.contentWindow;
-    // CIL change: margin of 0px on html body to prevent default 8px margins
-    //const CIL_style = "<style>@media print {html, body {margin: 0px;} }</style>";
-    //doc.body.innerHTML = this.printService.CIL ? CIL_style : "";
-    //doc.body.appendChild(this.printComponent.location.nativeElement);
+		x = x + 1;
+    }	
 	
+
+	this.alert.info(labels[0]);
+
 	
-	var outputHTML = this.getPlainText(contents);
+    var aggregated_output_html = "";
+	for (var label of labels) {
 	
-	var outputHTML1 = this.getPlainText(contents1);
+	    this.alert.info(label);
+	//	//outputHTML = this.getPlainText(label);
+		aggregated_output_html = aggregated_output_html + label;
+		
+	}
+	//var outputHTML = this.getPlainText(contents);
 	
-	var total_html = outputHTML + outputHTML1;
+	//var outputHTML1 = this.getPlainText(contents1);
+	
+	//var total_html = outputHTML + outputHTML1;
 	//this.alert.info(outputHTML);
 	//console.log(outputHTML);
     var printWindow = window.open();
 	printWindow.focus();
     printWindow.document.open('text/plain');
-    printWindow.document.write(total_html);
+    printWindow.document.write(aggregated_output_html);
 	printWindow.print()
     printWindow.document.close();  
 	 /* printWindow.print();*/
