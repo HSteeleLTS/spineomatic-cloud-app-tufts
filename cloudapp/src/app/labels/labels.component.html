@@ -11,6 +11,10 @@
   </button>
   <button mat-flat-button type="button" color="primary" [disabled]="!valid" (click)="print()">{{ 'Labels.Print' | translate:{length: printService.items.size} }}</button>
 </div>
+<app-modal [labels1]="labels1"></app-modal>
+<button mat-flat-button (click)="openChildComponentModal" color="secondary" >click here</button>
+
+
 <div class="config" *ngIf="config">
   <mat-form-field>
     <mat-label translate>Labels.SelectLayout</mat-label>

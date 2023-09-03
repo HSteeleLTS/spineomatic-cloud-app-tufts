@@ -17,6 +17,7 @@ import { MainComponent } from './main/main.component';
 import { ConfigurationComponent } from './configuration/configuration.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LayoutComponent } from './configuration/layout/layout.component';
+import { ModalComponent } from './modal/modal.component';
 import { TemplateComponent } from './configuration/template/template.component';
 import { ImageComponent } from './configuration/image/image.component'; 
 import { LabelsComponent } from './labels/labels.component';
@@ -24,6 +25,7 @@ import { PrintComponent } from './print/print.component';
 import { ConfigurationBaseComponent } from './configuration/configuration-base.component';
 import { PrefixComponent } from './configuration/template/prefix/prefix.component';
 import { ScanComponent } from './main/scan/scan.component';
+
 
 @NgModule({
   declarations: [					
@@ -36,8 +38,10 @@ import { ScanComponent } from './main/scan/scan.component';
     ImageComponent,
     LabelsComponent,
     PrintComponent,
+	ModalComponent,
     PrefixComponent,
     ScanComponent,
+    ModalComponent,
    ],
   imports: [
     MaterialModule,

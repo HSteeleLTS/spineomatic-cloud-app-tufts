@@ -1,4 +1,4 @@
-import { Component, ComponentFactoryResolver, ComponentRef, ElementRef, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
+import { Input, Component, ComponentFactoryResolver, ComponentRef, ElementRef, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import { Config, Layout } from '../models/configuration';
 import { ConfigService } from '../services/config.service';
 import { PrintService } from '../services/print.service';
@@ -15,6 +15,8 @@ import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { htmlToText } from 'html2text'; 
 import { parse } from 'node-html-parser';
+import { NgbModal, NgbActiveModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
+import { ModalComponent } from '../modal/modal.component';
 
 
 
@@ -32,18 +34,24 @@ const dialogData: PromptDialogData = {
   styleUrls: ['./labels.component.scss']
 })
 export class LabelsComponent implements OnInit {
+  labels1 = "";
   config: Config;
   startCase = startCase;
   @ViewChild('iframe', { read: ElementRef }) iframe: ElementRef;
   loading = false;
   isEqual = isEqual;
   printComponent: ComponentRef<PrintComponent>;
+  modalComponent: ComponentRef<ModalComponent>;
   layoutControl = new FormControl();
   filteredLayouts: Observable<string[]>;
   templateControl = new FormControl();
   filteredTemplates: Observable<string[]>;
+  dataPassToChild: any = null;
 
   constructor(
+    
+
+	private modalService: NgbModal,
     public printService: PrintService,
     private configService: ConfigService,
     private resolver: ComponentFactoryResolver,
@@ -94,6 +102,18 @@ export class LabelsComponent implements OnInit {
     this.loadItemsFromSet();
   }
 
+  openChildComponentModal(){
+
+    const modalRef = this.modalService.open(ModalComponent, { size: 'lg',backdrop:false});
+
+    (<ModalComponent>modalRef.componentInstance).labels1 = this.labels1;
+
+    modalRef.result.then((result) => {
+      console.log(result);
+    }).catch( (result) => {
+      console.log(result);
+    });
+  }
   loadItemsFromSet = () => {
     if (!!this.printService.setId) {
       this.loading = true;
@@ -181,6 +201,22 @@ export class LabelsComponent implements OnInit {
       this.printService.offset <= this.printService.layout.perPage;
   }
 
+  /*sendLabels () {
+	  var x = 0;
+	  var labels = []
+	  while (this.printComponent.instance.items[x]) {
+		var contents = this.printComponent.instance.contents(this.printComponent.instance.items[x][0]);
+		var outputHTML = this.getPlainText(contents);
+		//this.alert.info(outputHTML);
+		labels[x] = outputHTML;
+
+		x = x + 1;
+		
+		
+    }	
+	
+	this.labels1 = labels;
+  }*/
   print() {
     const doc = this.iframe.nativeElement.contentDocument || this.iframe.nativeElement.contentWindow;
     // CIL change: margin of 0px on html body to prevent default 8px margins
@@ -190,13 +226,20 @@ export class LabelsComponent implements OnInit {
 	var doc1 = "<div><p>test test1</p></div>";
     this.loading = true;
 	
-	this.printComponent.instance.load()
-    .pipe(finalize(() => this.loading = false))
+	
+    var x = 0;
+ 	this.printComponent.instance.load()
+	.pipe(finalize(() => this.loading = false))
     .subscribe({
       next: () => setTimeout(this.printIt),
 	  //next: (doc) => console.log('Observer got a next value: ' + x),
       error: e => this.alert.error('An error occurred: ' + e.message),
-    });
+    }); 
+	
+	
+
+	
+    
   }
 
   get percentComplete() {
@@ -211,13 +254,18 @@ export class LabelsComponent implements OnInit {
 		var contents = this.printComponent.instance.contents(this.printComponent.instance.items[x][0]);
 		var outputHTML = this.getPlainText(contents);
 		//this.alert.info(outputHTML);
+		var printWindow = window.open();
+		printWindow.focus();
+		printWindow.document.open('text/plain');
+		printWindow.document.write(outputHTML);
+
 		labels[x] = outputHTML;
 
 		x = x + 1;
     }	
 	
 
-	this.alert.info(labels[0]);
+	//this.alert.info(labels[0]);
 
 	
     var aggregated_output_html = "";
@@ -235,6 +283,7 @@ export class LabelsComponent implements OnInit {
 	//var total_html = outputHTML + outputHTML1;
 	//this.alert.info(outputHTML);
 	//console.log(outputHTML);
+	this.labels1 = aggregated_output_html;
     var printWindow = window.open();
 	printWindow.focus();
     printWindow.document.open('text/plain');
